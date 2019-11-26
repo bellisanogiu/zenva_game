@@ -32,6 +32,11 @@ class Game:
 
         player_character = PlayerCharacter('player.png', 375, 700, 50, 50)
         enemy_0 = NonPlayerCharacter('enemy.png', 20, 600, 50, 50)
+        enemy_1 = NonPlayerCharacter('enemy.png', 20, 400, 50, 50)
+        enemy_2 = NonPlayerCharacter('enemy.png', 20, 200, 50, 50)
+        enemies = [enemy_0, enemy_1, enemy_2]
+
+        treasure = GameObject('treasure.png', 375, 50, 50, 50)
 
         while not is_game_over:
             # A loop to get all of the events occuring at any given time
@@ -55,22 +60,37 @@ class Game:
                         direction = 0
                 print(event)
 
-                # Redraw the screen to be a blank white window
-                self.game_screen.fill(WHITE_COLOR)
+            # Redraw the screen to be a blank white window
+            self.game_screen.fill(WHITE_COLOR)
 
-                # Update the player position
-                player_character.move(direction, self.height)
-                player_character.draw(self.game_screen)
+            # Update the player position
+            player_character.move(direction, self.height)
+            player_character.draw(self.game_screen)
 
-                # Update the enemy position
-                enemy_0.move(self.width)
-                enemy_0.draw(self.game_screen)
+            # Update the enemy position
+            # enemy_0.move(self.width)
+            # enemy_0.draw(self.game_screen)
+            for i in enemies:
+                i.move(self.width)
+                i.draw(self.game_screen)
 
-                # Update all game graphics
-                pygame.display.update()
+            # Update treasure position
+            treasure.draw(self.game_screen)
 
-                # Tick the clock to update everything within the game
-                clock.tick(self.TICK_RATE)
+            # Verify collision
+            if player_character.detect_collision(treasure):
+                is_game_over = True
+            else:
+                for i in enemies:
+                    if player_character.detect_collision(i):
+                        is_game_over = True
+
+
+            # Update all game graphics
+            pygame.display.update()
+
+            # Tick the clock to update everything within the game
+            clock.tick(self.TICK_RATE)
 
 # Generic game object class to subclassed by other objects in the game
 class GameObject:
@@ -108,6 +128,22 @@ class PlayerCharacter(GameObject):
 
         if self.y_pos >= max_height - 40:
             self.y_pos = max_height - 40
+
+    def detect_collision(self, other_body):
+
+        # Collision y-axis
+        if self.y_pos > other_body.y_pos + other_body.height:
+            return False
+        elif self.y_pos + self.height < other_body.y_pos:
+            return False
+
+        # Collision x-axis
+        if self.x_pos > other_body.x_pos + other_body.width:
+            return False
+        elif self.x_pos + self.width < other_body.x_pos:
+            return False
+
+        return True
 
 # Class to represent the enemies moving left to right and right to left
 class NonPlayerCharacter(GameObject):
