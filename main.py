@@ -1,8 +1,9 @@
 # Game development with pygame
+# Giuseppe Bellisano
 
 import pygame
 
-SCREEN_TITLE = 'Crossy RPG'
+SCREEN_TITLE = 'Crossy RPG' 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 WHITE_COLOR = (255, 255, 255)
